@@ -210,14 +210,6 @@ public class DLViewEntriesDisplayContext {
 		return _redirect;
 	}
 
-	public String getRowURL(Folder folder) throws PortalException {
-		FolderActionDisplayContext folderActionDisplayContext =
-			new FolderActionDisplayContext(
-				_dlTrashHelper, _httpServletRequest, _liferayPortletResponse);
-
-		return folderActionDisplayContext.getRowURL(folder);
-	}
-
 	public SearchContainer<RepositoryEntry> getSearchContainer()
 		throws PortalException {
 
