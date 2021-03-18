@@ -54,7 +54,7 @@ List<Folder> folders = dlInfoPanelDisplayContext.getFolders();
 						</li>
 
 						<%
-						FolderActionDisplayContext folderActionDisplayContext = new FolderActionDisplayContext(dlTrashHelper, request, liferayPortletResponse);
+						FolderActionDisplayContext folderActionDisplayContext = new FolderActionDisplayContext(dlTrashHelper, request);
 						%>
 
 						<c:if test="<%= folderActionDisplayContext.isShowActions() %>">
