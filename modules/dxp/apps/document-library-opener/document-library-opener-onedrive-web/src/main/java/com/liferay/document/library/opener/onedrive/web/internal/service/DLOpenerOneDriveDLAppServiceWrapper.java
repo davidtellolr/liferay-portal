@@ -40,6 +40,7 @@ import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 
 import java.io.File;
+import java.io.InputStream;
 
 import java.util.Objects;
 
@@ -160,6 +161,32 @@ public class DLOpenerOneDriveDLAppServiceWrapper extends DLAppServiceWrapper {
 
 		_dlOpenerOneDriveManager.deleteFile(
 			serviceContext.getUserId(), fileEntry);
+	}
+
+	@Override
+	public FileEntry updateFileEntryAndCheckIn(
+			long fileEntryId, String sourceFileName, String mimeType,
+			String title, String description, String changeLog,
+			DLVersionNumberIncrease dlVersionNumberIncrease,
+			InputStream inputStream, long size, ServiceContext serviceContext)
+		throws PortalException {
+
+		FileEntry fileEntry = getFileEntry(fileEntryId);
+
+		if (!_dlOpenerOneDriveManager.isConfigured(fileEntry.getCompanyId()) ||
+			!_dlOpenerOneDriveManager.isOneDriveFile(fileEntry)) {
+
+			return super.updateFileEntryAndCheckIn(
+				fileEntryId, sourceFileName, mimeType, title, description,
+				changeLog, dlVersionNumberIncrease, null, serviceContext);
+		}
+
+		checkInFileEntry(
+			fileEntryId, dlVersionNumberIncrease, changeLog, serviceContext);
+
+		return super.updateFileEntry(
+			fileEntryId, sourceFileName, mimeType, title, description,
+			changeLog, dlVersionNumberIncrease, null, 0, serviceContext);
 	}
 
 	private long _getUserId() {
