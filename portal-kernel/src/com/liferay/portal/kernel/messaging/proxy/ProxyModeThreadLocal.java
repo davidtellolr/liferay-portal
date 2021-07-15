@@ -55,7 +55,17 @@ public class ProxyModeThreadLocal {
 	private static final CentralizedThreadLocal<Boolean> _forceSync =
 		new CentralizedThreadLocal<>(
 			ProxyModeThreadLocal.class + "_forceSync",
-			() -> GetterUtil.getBoolean(
-				PropsUtil.get(PropsKeys.PROXYTHREAD_MODE),true));
+			() -> {
+				String proxyModeValue = PropsUtil.get(
+					PropsKeys.PROXYTHREAD_MODE);
+
+				if (!proxyModeValue.isEmpty()) {
+					return GetterUtil.getBoolean(
+						PropsUtil.get(PropsKeys.PROXYTHREAD_MODE));
+				}
+				else {
+					return true;
+				}
+			});
 
 }
