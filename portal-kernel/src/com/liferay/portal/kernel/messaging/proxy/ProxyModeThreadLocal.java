@@ -17,6 +17,9 @@ package com.liferay.portal.kernel.messaging.proxy;
 import com.liferay.petra.lang.CentralizedThreadLocal;
 import com.liferay.petra.lang.SafeClosable;
 import com.liferay.petra.lang.SafeCloseable;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.PropsUtil;
 
 /**
  * @author Shuyang Zhou
@@ -51,6 +54,18 @@ public class ProxyModeThreadLocal {
 
 	private static final CentralizedThreadLocal<Boolean> _forceSync =
 		new CentralizedThreadLocal<>(
-			ProxyModeThreadLocal.class + "_forceSync", () -> Boolean.TRUE);
+			ProxyModeThreadLocal.class + "_forceSync",
+			() -> {
+				String proxyModeValue = PropsUtil.get(
+					PropsKeys.PROXYTHREAD_MODE);
+
+				if (!proxyModeValue.isEmpty()) {
+					return GetterUtil.getBoolean(
+						PropsUtil.get(PropsKeys.PROXYTHREAD_MODE));
+				}
+				else {
+					return true;
+				}
+			});
 
 }

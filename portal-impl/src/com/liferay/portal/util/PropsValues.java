@@ -2467,6 +2467,9 @@ public class PropsValues {
 		GetterUtil.getBoolean(
 			PropsUtil.get(PropsKeys.PREFERENCE_VALIDATE_ON_STARTUP));
 
+	public static final boolean PROXYTHREAD_MODE = GetterUtil.getBoolean(
+		PropsUtil.get(PropsKeys.PROXYTHREAD_MODE));
+
 	public static final int RATINGS_DEFAULT_NUMBER_OF_STARS =
 		GetterUtil.getInteger(
 			PropsUtil.get(PropsKeys.RATINGS_DEFAULT_NUMBER_OF_STARS));
