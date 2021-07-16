@@ -2756,6 +2756,8 @@ public interface PropsKeys {
 	public static final String PREFERENCE_VALIDATE_ON_STARTUP =
 		"preference.validate.on.startup";
 
+	public static final String PROXYTHREAD_MODE = "proxythread.mode.sync";
+
 	public static final String RATINGS_DEFAULT_NUMBER_OF_STARS =
 		"ratings.default.number.of.stars";
 
