@@ -15,6 +15,8 @@ definition {
 		TestCase.setUpPortalInstance();
 
 		ACUtils.launchDXP();
+
+		ACUtils.addSiteAndPage();
 	}
 
 	tearDown {
@@ -25,17 +27,59 @@ definition {
 		if ("${testPortalInstance}" == "true") {
 			PortalInstances.tearDownCP();
 		}
+		else {
+			JSONGroup.deleteGroupByName(groupName = "Site Name");
+		}
 
 		ACUtils.tearDownAC();
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8124 | Test Summary: Individual activities graph shows activities from today when switched to 24 hour view"
-	@ignore = "true"
 	@priority = "5"
-	test GraphShowsActivitiesFromTodayWhenSwitchedTo24HourView {
+	test GraphShowsIndividualActivitiesFromTodayWhenSwitchedTo24HourView {
+		ACUtils.createDMAndAddToPage();
 
-		// TODO LRAC-8124 GraphShowsActivitiesFromTodayWhenSwitchedTo24HourView pending implementation
+		var propertyName = ACDXPSettings.connectDXPtoAnalyticsCloud(siteName = "Site Name");
 
+		JSONUser.addUser(
+			userEmailAddress = "ac@liferay.com",
+			userFirstName = "ac",
+			userLastName = "ac",
+			userScreenName = "ac");
+
+		ACDXPSettings.syncNewContactData();
+
+		User.logoutAndLoginPG(
+			userLoginEmailAddress = "ac@liferay.com",
+			userLoginFullName = "ac ac");
+
+		for (var n : list "1,2,3,4") {
+			Navigator.gotoSitePage(
+				pageName = "AC Page",
+				siteName = "Site Name");
+
+			DMNavigator.gotoDocumentCP(dmDocumentTitle = "DM AC Title");
+		}
+
+		ACUtils.closeAllSessions();
+
+		Pause(locator1 = "30000");
+
+		ACUtils.launchAC();
+
+		ACProperties.switchProperty(propertyName = "${propertyName}");
+
+		ACNavigation.goToIndividuals();
+
+		ACIndividualsDashboard.goToKnownIndividualsTab();
+
+		ACNavigation.openItem(itemName = "ac ac");
+
+		ACTimeFilter.clickTimeFilterButton();
+
+		ACTimeFilter.setLast24Hours();
+
+		AssertElementPresent(locator1 = "ACIndividualsDashboard#INDIVIDUAL_ACTIVITIES_CHART");
 	}
 
 }

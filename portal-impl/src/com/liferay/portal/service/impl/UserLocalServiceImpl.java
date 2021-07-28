@@ -5050,18 +5050,17 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 			mailService.updatePassword(user.getCompanyId(), userId, password1);
 		}
 
-		user.setPassword(newEncPwd);
-		user.setPasswordUnencrypted(password1);
-		user.setPasswordEncrypted(true);
-		user.setPasswordReset(passwordReset);
-
 		ServiceContext serviceContext =
 			ServiceContextThreadLocal.getServiceContext();
 
 		if (!silentUpdate || (user.getPasswordModifiedDate() == null) ||
 			!_isPasswordUnchanged(user, password1, newEncPwd)) {
 
-			Date modifiedDate = serviceContext.getModifiedDate();
+			Date modifiedDate = null;
+
+			if (serviceContext != null) {
+				modifiedDate = serviceContext.getModifiedDate();
+			}
 
 			if (modifiedDate != null) {
 				user.setPasswordModifiedDate(modifiedDate);
@@ -5071,6 +5070,10 @@ public class UserLocalServiceImpl extends UserLocalServiceBaseImpl {
 			}
 		}
 
+		user.setPassword(newEncPwd);
+		user.setPasswordUnencrypted(password1);
+		user.setPasswordEncrypted(true);
+		user.setPasswordReset(passwordReset);
 		user.setDigest(user.getDigest(password1));
 		user.setGraceLoginCount(0);
 

@@ -14,10 +14,12 @@
 
 package com.liferay.object.rest.internal.manager.v1_0;
 
+import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.rest.dto.v1_0.ObjectEntry;
 import com.liferay.object.rest.internal.dto.v1_0.converter.ObjectEntryDTOConverter;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
+import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
@@ -75,8 +77,31 @@ public class ObjectEntryManagerImpl implements ObjectEntryManager {
 	}
 
 	@Override
+	public ObjectEntry addOrUpdateObjectEntry(
+			DTOConverterContext dtoConverterContext,
+			String externalReferenceCode, long userId, long groupId,
+			long objectDefinitionId, ObjectEntry objectEntry)
+		throws Exception {
+
+		return _objectEntryDTOConverter.toDTO(
+			dtoConverterContext,
+			_objectEntryLocalService.addOrUpdateObjectEntry(
+				externalReferenceCode, userId, groupId, objectDefinitionId,
+				(Map)objectEntry.getProperties(), new ServiceContext()));
+	}
+
+	@Override
 	public void deleteObjectEntry(long objectEntryId) throws Exception {
 		_objectEntryLocalService.deleteObjectEntry(objectEntryId);
+	}
+
+	@Override
+	public void deleteObjectEntry(
+			String externalReferenceCode, long companyId, long groupId)
+		throws Exception {
+
+		_objectEntryLocalService.deleteObjectEntry(
+			externalReferenceCode, companyId, groupId);
 	}
 
 	@Override
@@ -85,6 +110,10 @@ public class ObjectEntryManagerImpl implements ObjectEntryManager {
 			DTOConverterContext dtoConverterContext, Filter filter,
 			Pagination pagination, String search, Sort[] sorts)
 		throws Exception {
+
+		ObjectDefinition objectDefinition =
+			_objectDefinitionLocalService.getObjectDefinition(
+				objectDefinitionId);
 
 		return SearchUtil.search(
 			new HashMap<>(),
@@ -98,8 +127,7 @@ public class ObjectEntryManagerImpl implements ObjectEntryManager {
 						String.valueOf(objectDefinitionId)),
 					BooleanClauseOccur.MUST);
 			},
-			filter, com.liferay.object.model.ObjectEntry.class, search,
-			pagination,
+			filter, objectDefinition.getClassName(), search, pagination,
 			queryConfig -> queryConfig.setSelectedFieldNames(
 				Field.ENTRY_CLASS_PK),
 			searchContext -> {
@@ -122,6 +150,18 @@ public class ObjectEntryManagerImpl implements ObjectEntryManager {
 		return _objectEntryDTOConverter.toDTO(
 			dtoConverterContext,
 			_objectEntryLocalService.getObjectEntry(objectEntryId));
+	}
+
+	@Override
+	public ObjectEntry getObjectEntry(
+			DTOConverterContext dtoConverterContext,
+			String externalReferenceCode, long companyId, long groupId)
+		throws Exception {
+
+		return _objectEntryDTOConverter.toDTO(
+			dtoConverterContext,
+			_objectEntryLocalService.getObjectEntry(
+				externalReferenceCode, companyId, groupId));
 	}
 
 	@Override
@@ -193,6 +233,9 @@ public class ObjectEntryManagerImpl implements ObjectEntryManager {
 
 		return values;
 	}
+
+	@Reference
+	private ObjectDefinitionLocalService _objectDefinitionLocalService;
 
 	@Reference
 	private ObjectEntryDTOConverter _objectEntryDTOConverter;

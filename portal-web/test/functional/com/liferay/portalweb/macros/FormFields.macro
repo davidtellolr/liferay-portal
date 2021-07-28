@@ -513,17 +513,7 @@ definition {
 			locator1 = "CKEditor#BODY",
 			value1 = "${content}");
 
-		SelectFieldText(locator1 = "CKEditor#BODY");
-
-		SelectFrame(value1 = "relative=top");
-
-		WaitForElementPresent(
-			key_titleName = "${optionTool}",
-			locator1 = "FormFields#TOOLBAR_ANY_ITEM_BUTTON");
-
-		Click(
-			key_titleName = "${optionTool}",
-			locator1 = "FormFields#TOOLBAR_ANY_ITEM_BUTTON");
+		SelectFrame();
 	}
 
 	macro editTextDescription {
@@ -983,6 +973,22 @@ definition {
 		AssertElementPresent(
 			key_imageName = "${uploadFileName}",
 			locator1 = "Form#SIDEBAR_ADVANCED_PREDEFINED_VALUE");
+	}
+
+	macro toggleCKEditorContentStyle {
+		SelectFrame.selectFrameNoLoading(locator1 = "CKEditor#BODY_FIELD_IFRAME");
+
+		SelectFieldText(locator1 = "CKEditor#BODY");
+
+		SelectFrame();
+
+		WaitForElementPresent(
+			key_titleName = "${optionTool}",
+			locator1 = "FormFields#TOOLBAR_ANY_ITEM_BUTTON");
+
+		Click(
+			key_titleName = "${optionTool}",
+			locator1 = "FormFields#TOOLBAR_ANY_ITEM_BUTTON");
 	}
 
 	macro validateImagePredefinedValue {

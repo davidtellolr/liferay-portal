@@ -5,6 +5,6 @@
 app.artifacts-4.0.3=\
 	
 
-app.change.log-4.0.3=LPS-131706
+app.change.log-4.0.3=LPS-131706 LPS-136275
 
-app.git.id-4.0.3=f29aab7670aa87d4ffc6832bd469f07731ba90e0
+app.git.id-4.0.3=dc7fd4fb62356dfa080ed8a1673a2d7c50ebc5fd

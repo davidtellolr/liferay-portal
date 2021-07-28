@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Map;
 
@@ -53,10 +54,21 @@ public class JournalArticleDescriptionEditorConfigContributor
 		).put(
 			"pasteFilter", "p br strong i ol ul li u link pre em a[href]"
 		).put(
-			"resize_enabled", false
+			"resize_enabled", true
 		).put(
 			"toolbar", getToolbarJSONArray()
 		);
+
+		String removePlugins = jsonObject.getString("removePlugins");
+
+		if (Validator.isNotNull(removePlugins)) {
+			removePlugins = removePlugins + ",autogrow";
+		}
+		else {
+			removePlugins = "autogrow";
+		}
+
+		jsonObject.put("removePlugins", removePlugins);
 	}
 
 	protected JSONArray getToolbarJSONArray() {

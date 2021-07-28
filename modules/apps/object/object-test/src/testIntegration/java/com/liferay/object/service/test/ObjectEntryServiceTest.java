@@ -23,6 +23,7 @@ import com.liferay.object.service.ObjectEntryLocalServiceUtil;
 import com.liferay.object.service.ObjectEntryServiceUtil;
 import com.liferay.object.service.ObjectFieldLocalServiceUtil;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
@@ -47,7 +48,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -92,7 +92,6 @@ public class ObjectEntryServiceTest {
 		PermissionThreadLocal.setPermissionChecker(_originalPermissionChecker);
 	}
 
-	@Ignore
 	@Test
 	public void testAddObjectEntry() throws Exception {
 		try {
@@ -129,6 +128,59 @@ public class ObjectEntryServiceTest {
 		}
 
 		_testDeleteObjectEntry(_user);
+	}
+
+	@Test
+	public void testGetObjectEntry() throws Exception {
+		try {
+			_testGetObjectEntry(_defaultUser);
+		}
+		catch (PrincipalException.MustHavePermission principalException) {
+			String message = principalException.getMessage();
+
+			Assert.assertTrue(
+				message.contains(
+					"User " + _defaultUser.getUserId() +
+						" must have VIEW permission for"));
+		}
+
+		_testGetObjectEntry(_user);
+	}
+
+	@Test
+	public void testSearchObjectEntries() throws Exception {
+		_setUser(_user);
+
+		ObjectEntry objectEntry1 = _addObjectEntry(_user);
+		ObjectEntry objectEntry2 = _addObjectEntry(_user);
+
+		BaseModelSearchResult<ObjectEntry> baseModelSearchResult =
+			ObjectEntryLocalServiceUtil.searchObjectEntries(
+				_objectDefinition.getObjectDefinitionId(), null, 0, 20);
+
+		Assert.assertEquals(2, baseModelSearchResult.getLength());
+
+		_setUser(_defaultUser);
+
+		baseModelSearchResult = ObjectEntryLocalServiceUtil.searchObjectEntries(
+			_objectDefinition.getObjectDefinitionId(), null, 0, 20);
+
+		Assert.assertEquals(0, baseModelSearchResult.getLength());
+
+		ObjectEntryLocalServiceUtil.deleteObjectEntry(objectEntry1);
+		ObjectEntryLocalServiceUtil.deleteObjectEntry(objectEntry2);
+	}
+
+	private ObjectEntry _addObjectEntry(User user) throws Exception {
+		return ObjectEntryLocalServiceUtil.addObjectEntry(
+			user.getUserId(), 0, _objectDefinition.getObjectDefinitionId(),
+			HashMapBuilder.<String, Serializable>put(
+				"firstName", RandomStringUtils.randomAlphabetic(5)
+			).put(
+				"LastName", RandomStringUtils.randomAlphabetic(5)
+			).build(),
+			ServiceContextTestUtil.getServiceContext(
+				TestPropsValues.getGroupId(), user.getUserId()));
 	}
 
 	private ObjectField _createObjectField(
@@ -184,21 +236,31 @@ public class ObjectEntryServiceTest {
 		try {
 			_setUser(user);
 
-			objectEntry = ObjectEntryLocalServiceUtil.addObjectEntry(
-				user.getUserId(), 0, _objectDefinition.getObjectDefinitionId(),
-				HashMapBuilder.<String, Serializable>put(
-					"firstName", RandomStringUtils.randomAlphabetic(5)
-				).put(
-					"LastName", RandomStringUtils.randomAlphabetic(5)
-				).build(),
-				ServiceContextTestUtil.getServiceContext(
-					TestPropsValues.getGroupId(), user.getUserId()));
+			objectEntry = _addObjectEntry(user);
 
 			deleteObjectEntry = ObjectEntryServiceUtil.deleteObjectEntry(
 				objectEntry.getObjectEntryId());
 		}
 		finally {
 			if (deleteObjectEntry == null) {
+				ObjectEntryLocalServiceUtil.deleteObjectEntry(objectEntry);
+			}
+		}
+	}
+
+	private void _testGetObjectEntry(User user) throws Exception {
+		ObjectEntry objectEntry = null;
+
+		try {
+			_setUser(user);
+
+			objectEntry = _addObjectEntry(user);
+
+			ObjectEntryServiceUtil.getObjectEntry(
+				objectEntry.getObjectEntryId());
+		}
+		finally {
+			if (objectEntry != null) {
 				ObjectEntryLocalServiceUtil.deleteObjectEntry(objectEntry);
 			}
 		}

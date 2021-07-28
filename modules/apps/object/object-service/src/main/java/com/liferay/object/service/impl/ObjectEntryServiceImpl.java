@@ -101,6 +101,20 @@ public class ObjectEntryServiceImpl extends ObjectEntryServiceBaseImpl {
 		return objectEntryLocalService.deleteObjectEntry(objectEntryId);
 	}
 
+	@Override
+	public ObjectEntry getObjectEntry(long objectEntryId)
+		throws PortalException {
+
+		ObjectEntry objectEntry = objectEntryLocalService.getObjectEntry(
+			objectEntryId);
+
+		_checkModelResourcePermission(
+			objectEntry.getObjectDefinitionId(), objectEntry.getObjectEntryId(),
+			ActionKeys.VIEW);
+
+		return objectEntry;
+	}
+
 	@Reference(
 		cardinality = ReferenceCardinality.MULTIPLE,
 		policy = ReferencePolicy.DYNAMIC,

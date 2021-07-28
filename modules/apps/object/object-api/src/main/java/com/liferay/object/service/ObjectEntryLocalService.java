@@ -68,7 +68,6 @@ public interface ObjectEntryLocalService
 	 *
 	 * Never modify this interface directly. Add custom service methods to <code>com.liferay.object.service.impl.ObjectEntryLocalServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface. Consume the object entry local service via injection or a <code>org.osgi.util.tracker.ServiceTracker</code>. Use {@link ObjectEntryLocalServiceUtil} if injection and service tracking are not available.
 	 */
-	@Indexable(type = IndexableType.REINDEX)
 	public ObjectEntry addObjectEntry(
 			long userId, long groupId, long objectDefinitionId,
 			Map<String, Serializable> values, ServiceContext serviceContext)
@@ -87,7 +86,6 @@ public interface ObjectEntryLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public ObjectEntry addObjectEntry(ObjectEntry objectEntry);
 
-	@Indexable(type = IndexableType.REINDEX)
 	public ObjectEntry addOrUpdateObjectEntry(
 			String externalReferenceCode, long userId, long groupId,
 			long objectDefinitionId, Map<String, Serializable> values,
@@ -138,6 +136,10 @@ public interface ObjectEntryLocalService
 	@Indexable(type = IndexableType.DELETE)
 	@SystemEvent(type = SystemEventConstants.TYPE_DELETE)
 	public ObjectEntry deleteObjectEntry(ObjectEntry objectEntry)
+		throws PortalException;
+
+	public ObjectEntry deleteObjectEntry(
+			String externalReferenceCode, long companyId, long groupId)
 		throws PortalException;
 
 	/**
@@ -310,6 +312,11 @@ public interface ObjectEntryLocalService
 	public ObjectEntry getObjectEntry(long objectEntryId)
 		throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ObjectEntry getObjectEntry(
+			String externalReferenceCode, long companyId, long groupId)
+		throws PortalException;
+
 	/**
 	 * Returns the object entry matching the UUID and group.
 	 *
@@ -360,7 +367,6 @@ public interface ObjectEntryLocalService
 			String[] assetTagNames, long[] assetLinkEntryIds, Double priority)
 		throws PortalException;
 
-	@Indexable(type = IndexableType.REINDEX)
 	public ObjectEntry updateObjectEntry(
 			long userId, long objectEntryId, Map<String, Serializable> values,
 			ServiceContext serviceContext)
@@ -379,7 +385,6 @@ public interface ObjectEntryLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public ObjectEntry updateObjectEntry(ObjectEntry objectEntry);
 
-	@Indexable(type = IndexableType.REINDEX)
 	public ObjectEntry updateStatus(
 			long userId, long objectEntryId, int status,
 			ServiceContext serviceContext,

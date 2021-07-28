@@ -12,12 +12,12 @@
  * details.
  */
 
-import {PagesVisitor, sectionAdded} from 'data-engine-js-components-web';
 import {
 	FieldSetUtil,
-	FieldSupport,
-	SettingsContext,
-} from 'dynamic-data-mapping-form-builder';
+	PagesVisitor,
+	sectionAdded,
+} from 'data-engine-js-components-web';
+import {FieldSupport, SettingsContext} from 'dynamic-data-mapping-form-builder';
 
 import {EVENT_TYPES} from '../eventTypes';
 import {
@@ -207,12 +207,22 @@ export default (state, action, config) => {
 					defaultLanguageId,
 					editingLanguageId,
 				};
-				const updatedFieldSet = SettingsContext.updateField(
+
+				let updatedFieldSet = SettingsContext.updateField(
 					props,
 					field,
 					'label',
 					fieldSet.name
 				);
+
+				if (rows && rows.length) {
+					updatedFieldSet = SettingsContext.updateField(
+						props,
+						updatedFieldSet,
+						'rows',
+						rows
+					);
+				}
 
 				return {...updatedFieldSet, nestedFields, rows};
 			});

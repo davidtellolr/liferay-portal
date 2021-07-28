@@ -82,6 +82,15 @@ public class ObjectEntryResourceImpl extends BaseObjectEntryResourceImpl {
 	}
 
 	@Override
+	public void deleteSiteObjectEntryByExternalReferenceCode(
+			Long siteId, String externalReferenceCode)
+		throws Exception {
+
+		_objectEntryManager.deleteObjectEntry(
+			externalReferenceCode, contextCompany.getCompanyId(), siteId);
+	}
+
+	@Override
 	public EntityModel getEntityModel(MultivaluedMap multivaluedMap) {
 		if (_entityModel == null) {
 			_entityModel = new ObjectEntryEntityModel(
@@ -111,6 +120,16 @@ public class ObjectEntryResourceImpl extends BaseObjectEntryResourceImpl {
 	}
 
 	@Override
+	public ObjectEntry getSiteObjectEntryByExternalReferenceCode(
+			Long siteId, String externalReferenceCode)
+		throws Exception {
+
+		return _objectEntryManager.getObjectEntry(
+			_getDTOConverterContext(null), externalReferenceCode,
+			contextCompany.getCompanyId(), siteId);
+	}
+
+	@Override
 	public ObjectEntry postObjectEntry(ObjectEntry objectEntry)
 		throws Exception {
 
@@ -127,6 +146,17 @@ public class ObjectEntryResourceImpl extends BaseObjectEntryResourceImpl {
 		return _objectEntryManager.updateObjectEntry(
 			_getDTOConverterContext(objectEntryId), contextUser.getUserId(),
 			objectEntryId, objectEntry);
+	}
+
+	@Override
+	public ObjectEntry putSiteObjectEntryByExternalReferenceCode(
+			Long siteId, String externalReferenceCode, ObjectEntry objectEntry)
+		throws Exception {
+
+		return _objectEntryManager.addOrUpdateObjectEntry(
+			_getDTOConverterContext(null), externalReferenceCode,
+			contextUser.getUserId(), siteId,
+			_objectDefinition.getObjectDefinitionId(), objectEntry);
 	}
 
 	@Override

@@ -18,6 +18,7 @@ definition {
 		if ("${testPortalInstance}" == "true") {
 			PortalInstances.tearDownCP();
 		}
+
 		else {
 			Workflow.tearDownSpecificWorkflowDefinition(workflowDefinitionTitle = "Edited Workflow Definition");
 
@@ -26,264 +27,820 @@ definition {
 	}
 
 	@description = "Verify that Action can be added"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanAddAction {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68480 CanAddAction pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Title");
 
+		KaleoDesigner.addNodeViaViewTab(
+			nodeDescription = "Task Node Description",
+			nodeName = "Task",
+			nodeNodeLabel = "Task",
+			nodeType = "task");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "Task");
+
+		KaleoDesigner.editNodeActions(
+			actionDescription = "Node Actions Test Description",
+			actionName = "Node Actions Test");
+
+		AssertElementPresent(
+			key_actionsValue = "Node Actions Test",
+			locator1 = "KaleoDesignerEditWorkflow#SETTINGS_ACTIONS_VALUE");
 	}
 
 	@description = "Verify that multiple Assignment can be added"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanAddMultipleAssignment {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68482 CanAddMultipleAssignment pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Title");
 
+		KaleoDesigner.addConnectorAndNodeViaViewTab(
+			connectorName = "connector",
+			newNode = "Task",
+			newNodeDescription = "Task Node Description",
+			newNodeName = "Task",
+			newNodeType = "task",
+			nodeType = "start");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "Task");
+
+		KaleoDesigner.editNodeAssignments(
+			autoCreate = "true",
+			nodeAssignmentType = "Role Type",
+			roleName = "Test 1",
+			roleType = "Regular");
+
+		DoubleClick(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_ASSIGNMENTS");
+
+		KaleoDesigner.addNodeSettingsSection();
+
+		KaleoDesigner.editNodeAssignments(
+			autoCreate = "true",
+			nodeAssignmentType = "Role Type",
+			roleName = "Test 2",
+			roleType = "Regular");
+
+		AssertTextEquals(
+			locator1 = "KaleoDesignerEditWorkflow#SETTINGS_ASSIGNMENTS",
+			value1 = "Role Type");
 	}
 
 	@description = "Verify that Notification can be added"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanAddNotification {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68479 CanAddNotification pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Title");
 
+		KaleoDesigner.deleteNode(nodeNodeLabel = "EndNode");
+
+		KaleoDesigner.addConnectorAndNodeViaViewTab(
+			connectorName = "connector",
+			newNode = "Task",
+			newNodeDescription = "Task Node Description",
+			newNodeName = "Task",
+			newNodeType = "task",
+			nodeType = "start");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "Task");
+
+		KaleoDesigner.editNodeNotifications(
+			nodeNotificationsDescription = "Notification Description",
+			nodeNotificationsName = "Notification",
+			nodeNotificationsRecipientType = "Role Type",
+			roleTitle = "Administrator",
+			roleType = "Regular");
+
+		AssertTextEquals(
+			locator1 = "KaleoDesignerEditWorkflow#SETTINGS_NOTIFICATIONS",
+			value1 = "Notification");
 	}
 
 	@description = "Verify that Timers can be added"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanAddTimers {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68478 CanAddTimers pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Title");
 
+		KaleoDesigner.deleteNode(nodeNodeLabel = "EndNode");
+
+		KaleoDesigner.addConnectorAndNodeViaViewTab(
+			connectorName = "connector",
+			newNode = "Task",
+			newNodeDescription = "Task Node Description",
+			newNodeName = "Task",
+			newNodeType = "task",
+			nodeType = "start");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "Task");
+
+		KaleoDesigner.editNodeTimer(
+			blockerDescription = "Blocker Description",
+			blockerName = "Blocker Name",
+			blockerScript = "Test Script",
+			durationScale1 = "Hour",
+			durationScale2 = "Hour",
+			durationTime1 = "5",
+			durationTime2 = "6",
+			timerDescription = "Timer Description",
+			timerName = "Timer Name");
+
+		AssertTextEquals(
+			locator1 = "KaleoDesignerEditWorkflow#SETTINGS_TIMERS",
+			value1 = "Timer Name");
 	}
 
 	@description = "Verify that the user can add translations"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanAddTranslations {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68439 CanAddTranslations pending implementation
+		LexiconEntry.gotoAdd();
 
+		Click(
+			key_icon = "en-us",
+			locator1 = "KaleoDesigner#ICON_COUNTRY");
+
+		Click(
+			key_icon = "pt-br",
+			locator1 = "KaleoDesigner#UNTRANSLATED_ICON_COUNTRY");
+
+		PortletEntry.inputTitle(title = "Test Title");
+
+		Click(
+			key_icon = "en-us",
+			locator1 = "KaleoDesigner#ICON_COUNTRY");
+
+		Click(
+			key_icon = "fr-fr",
+			locator1 = "KaleoDesigner#UNTRANSLATED_ICON_COUNTRY");
+
+		PortletEntry.inputTitle(title = "Test Title");
+
+		PortletEntry.save();
+
+		Click(
+			key_icon = "en-us",
+			locator1 = "KaleoDesigner#ICON_COUNTRY");
+
+		AssertElementPresent(
+			key_icon = "pt-br",
+			locator1 = "KaleoDesigner#TRANSLATED_ICON_COUNTRY");
+
+		AssertElementPresent(
+			key_icon = "fr-fr",
+			locator1 = "KaleoDesigner#TRANSLATED_ICON_COUNTRY");
 	}
 
 	@description = "Verify that user can create transition between nodes from the edge of node"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test CanCreateTransition {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68456 CanMovCanCreateTransitioneNode pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Title");
 
+		KaleoDesigner.addNodeViaViewTab(
+			nodeDescription = "Task Node Description",
+			nodeName = "Task",
+			nodeNodeLabel = "Task",
+			nodeType = "task");
+
+		KaleoDesigner.addConnectorViaViewTab(
+			connectorName = "transition",
+			nodeType = "start",
+			nodeTypeDestination = "task");
+
+		KaleoDesigner.viewConnectorPresent(connectorLabel = "transition");
 	}
 
 	@description = "Verify that user can delete selected Node"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanDeleteNode {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68453 CanDeleteNode pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Title");
 
+		KaleoDesigner.selectNode(nodeNodeLabel = "StartNode");
+
+		KaleoDesigner.deleteNode(nodeNodeLabel = "StartNode");
+
+		KaleoDesigner.viewNodeNotPresent(nodeNodeLabel = "StartNode");
 	}
 
 	@description = "Verify that properties can be modified"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test CanModifyProperties {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68451 CanModifyProperties pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Title");
 
+		KaleoDesigner.selectNode(nodeNodeLabel = "StartNode");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_TABLE");
+
+		AssertEditable(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_NOTIFICATIONS");
+
+		AssertEditable(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_DESCRIPTION");
+
+		AssertEditable(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_NAME");
+
+		AssertEditable(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_TYPE");
 	}
 
 	@description = "Verify that the user can move nodes in diagram by drag&drop in the middle of node"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanMoveNode {
+		property test.name.skip.portal.instance = "ProcessBuilderKaleoDesigner#AddStartNodeEditNameAndDesciptionAndDeleteViaViewTab";
 
-		// TODO LRQA-68455 CanMoveNode pending implementation
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Definition Title");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "StartNode");
+
+		DragAndDrop.dragAndDrop(
+			key_nodeNodeLabel = "StartNode",
+			locator1 = "KaleoDesignerEditWorkflow#VIEW_FORM_NODE",
+			value1 = "250,100");
+
+		AssertElementPresent(
+			key_nodeNodeLabel = "StartNode",
+			locator1 = "KaleoDesignerEditWorkflow#VIEW_FORM_NODE",
+			value1 = "250,100");
 	}
 
 	@description = "Verify that the user can rename a Node"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanRenameNode {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68449 CanRenameNode pending implementation
+		LexiconEntry.gotoAdd();
 
+		KaleoDesigner.addNodeViaViewTab(
+			nodeDescription = "Condition Description",
+			nodeName = "Condition Update",
+			nodeNodeLabel = "Condition",
+			nodeType = "condition");
+
+		PortletEntry.inputTitle(title = "Test 1");
+
+		Workflow.saveDefinition();
+
+		Click(
+			key_nodeType = "Condition Update",
+			locator1 = "KaleoDesignerEditWorkflow#VIEW_FORM_NODE_DEFAULT");
+
+		DoubleClick(locator1 = "DDMEditStructure#SETTINGS_NAME");
+
+		AssertTextEquals(
+			locator1 = "DDMEditStructure#SETTINGS_NAME",
+			value1 = "Condition Update");
 	}
 
 	@description = "Verify that user can Save workflow as Draft"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanSaveAsDraft {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68470 CanSaveAsDraft pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Title");
 
+		Workflow.saveDefinition();
+
+		Alert.viewSuccessMessageText(successMessage = "Workflow saved.");
+
+		ProcessBuilderKaleoDesigner.viewWorkflowStatus(
+			workflowDefinitionTitle = "New Workflow Title",
+			workflowStatus = "Not Published");
 	}
 
 	@description = "Verify that the user can select each node in Diagram"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanSelectNodeOnDiagram {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68450 CanSelectNodeOnDiagram pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Title");
 
+		KaleoDesigner.addNodeViaViewTab(
+			nodeDescription = "Task Node Description",
+			nodeName = "Task",
+			nodeNodeLabel = "Task",
+			nodeType = "task");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "StartNode");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "EndNode");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "Task");
 	}
 
 	@description = "Verify that the user can set transition Default"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test CanSetDefaultTransition {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68484 CanSetDefaultTransition pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Title");
 
+		KaleoDesigner.addNodeViaViewTab(
+			nodeDescription = "Task Description",
+			nodeName = "Tast Name",
+			nodeNodeLabel = "Task",
+			nodeType = "task");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "StartNode");
+
+		KaleoDesigner.addConnectorViaViewTab(
+			connectorName = "Connection",
+			nodeType = "start",
+			nodeTypeDestination = "task");
+
+		KaleoDesigner.editConnectorDefault(key_radioOption = "true");
+
+		AssertElementPresent(locator1 = "KaleoDesigner#VIEW_VALUE_TRUE_DEFAULT_CONNECTORS");
 	}
 
 	@description = "Verify that Condition Node do not have Timers property"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test ConditionHasNoTimersProperty {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68475 ConditionHasNoTimersProperty pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Title");
 
+		KaleoDesigner.addNodeViaViewTab(
+			nodeDescription = "Condition Node Description",
+			nodeName = "Condition",
+			nodeNodeLabel = "Condition",
+			nodeType = "condition");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "Condition");
+
+		AssertElementNotPresent(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_TIMERS");
 	}
 
 	@description = "Verify that the user can rename connector"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test ConnectorCanBeRenamed {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68483 ConnectorCanBeRenamed pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Title");
 
+		KaleoDesigner.deleteNode(nodeNodeLabel = "EndNode");
+
+		KaleoDesigner.addConnectorAndNodeViaViewTab(
+			connectorName = "connector",
+			newNode = "Task",
+			newNodeDescription = "Task Node Description",
+			newNodeName = "Task",
+			newNodeType = "task",
+			nodeType = "start");
+
+		Click(locator1 = "KaleoDesignerEditWorkflow#VIEW_FORM_CONNECTOR_DEFAULT");
+
+		KaleoDesigner.editConnectorName(connectorName = "test");
+
+		AssertTextEquals(
+			locator1 = "DDMEditStructure#SETTINGS_NAME",
+			value1 = "test");
 	}
 
 	@description = "Verify that newly created transition has default name -connector#-"
-	@ignore = "Test Stub"
 	@priority = "3"
 	test ConnectorHasDefaultName {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68460 ConnectorHasDefaultName pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow");
 
+		KaleoDesigner.addConnectorAndNodeViaViewTab(
+			connectorName = "Connector1",
+			newNode = "Fork",
+			newNodeDescription = "Fork Node Description",
+			newNodeName = "Fork",
+			newNodeType = "fork",
+			nodeType = "start");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#VIEW_FORM_CONNECTOR_DEFAULT");
 	}
 
 	@description = "Verify that default names for nodes are provided"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test DefaultNamesAreProvided {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68448 DefaultNamesAreProvided pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Definition Title");
 
+		ProcessBuilderKaleoDesigner.addNodesByDragging(nodeTitleAndPositionList = "Condition;300.100,End;180.70,Fork;280.100,Join;280.270,Join XOR;360.200,Start;360.70,State;390.250,Task;400.100");
+
+		ProcessBuilderKaleoDesigner.assertDefaultNodesOnForm(nodesList = "condition,end,fork,join,join-xor,start,state,task");
 	}
 
 	@description = "Verify that If user selects node, cross on top right appear"
-	@ignore = "Test Stub"
 	@priority = "3"
 	test DisplaysCrossOnTopRight {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68452 DisplaysCrossOnTopRight pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow");
 
+		KaleoDesigner.selectNode(nodeNodeLabel = "StartNode");
+
+		AssertElementPresent.assertVisible(
+			key_nodeNodeLabel = "StartNode",
+			locator1 = "KaleoDesignerEditWorkflow#VIEW_FORM_NODE_DELETE_ICON");
 	}
 
 	@description = "Verify that a pop up message is displayed when deleting Node"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test DisplaysMessageOnDeletingNode {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68454 DisplaysMessageOnDeletingNode pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Title");
 
+		KaleoDesigner.selectNode(nodeNodeLabel = "StartNode");
+
+		ClickNoError(
+			key_nodeNodeLabel = "StartNode",
+			locator1 = "KaleoDesignerEditWorkflow#VIEW_FORM_NODE_DELETE_ICON");
+
+		AssertConfirm(value1 = "Are you sure you want to delete the selected node(s)?");
 	}
 
 	@description = "Verify that the Fork node must have at least two outgoing transitions."
-	@ignore = "Test Stub"
 	@priority = "4"
 	test ForkNodeMustHaveMoreThanOneTransition {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68468 ForkNodeMustHaveMoreThanOneTransition pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow");
 
+		KaleoDesigner.selectNode(nodeNodeLabel = "EndNode");
+
+		KaleoDesigner.deleteNode(nodeNodeLabel = "EndNode");
+
+		KaleoDesigner.addConnectorAndNodeViaViewTab(
+			connectorName = "Connector1",
+			newNode = "Fork",
+			newNodeDescription = "Fork Node Description",
+			newNodeName = "Fork",
+			newNodeType = "fork",
+			nodeType = "start");
+
+		KaleoDesigner.addConnectorAndNodeViaViewTab(
+			connectorName = "Connector2",
+			newNode = "Join",
+			newNodeDescription = "Join Node Description",
+			newNodeName = "Join",
+			newNodeType = "join",
+			nodeType = "fork");
+
+		KaleoDesigner.addConnectorAndNodeViaViewTab(
+			connectorName = "Connector2",
+			newNode = "End",
+			newNodeDescription = "End Node Description",
+			newNodeName = "End",
+			newNodeType = "end",
+			nodeType = "join");
+
+		Button.clickPublish();
+
+		AssertTextEquals.assertPartialTextAceEditor(
+			locator1 = "Message#ERROR",
+			value1 = "node must have at least two outgoing transitions");
 	}
 
 	@description = "Verify that each type of Node has Actions property"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test HasActionsProperty {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68477 HasActionsProperty pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Title");
 
+		KaleoDesigner.selectNode(nodeNodeLabel = "StartNode");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_ACTIONS");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "EndNode");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_ACTIONS");
+
+		KaleoDesigner.addNodeViaViewTab(
+			nodeDescription = "Join Node Description",
+			nodeName = "Join",
+			nodeNodeLabel = "Join",
+			nodeType = "join");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "Join");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_ACTIONS");
+
+		KaleoDesigner.addConnectorAndNodeViaViewTab(
+			connectorName = "Submit",
+			newNode = "Join XOR",
+			newNodeDescription = "JoinXOR Description",
+			newNodeName = "JoinXOR",
+			newNodeType = "join-xor",
+			nodeType = "start");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "JoinXOR");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_ACTIONS");
 	}
 
 	@description = "Verify that each type of Node has Description property"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test HasDescriptionProperty {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68473 HasDescriptionProperty pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Title");
 
+		KaleoDesigner.selectNode(nodeNodeLabel = "StartNode");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_DESCRIPTION");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "EndNode");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_DESCRIPTION");
+
+		KaleoDesigner.addNodeViaViewTab(
+			nodeDescription = "Fork Node Description",
+			nodeName = "Fork",
+			nodeNodeLabel = "Fork",
+			nodeType = "fork");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "Fork");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_DESCRIPTION");
+
+		KaleoDesigner.addNodeViaViewTab(
+			nodeDescription = "Condition Node Description",
+			nodeName = "Condition",
+			nodeNodeLabel = "Condition",
+			nodeType = "condition");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "Condition");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_DESCRIPTION");
 	}
 
 	@description = "Verify that each type of Node has Name property"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test HasNameProperty {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68471 HasNameProperty pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Title");
 
+		KaleoDesigner.selectNode(nodeNodeLabel = "StartNode");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_NAME");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "EndNode");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_NAME");
+
+		KaleoDesigner.addNodeViaViewTab(
+			nodeDescription = "Fork Node Description",
+			nodeName = "Fork",
+			nodeNodeLabel = "Fork",
+			nodeType = "fork");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "Fork");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_NAME");
+
+		KaleoDesigner.addNodeViaViewTab(
+			nodeDescription = "Condition Node Description",
+			nodeName = "Condition",
+			nodeNodeLabel = "Condition",
+			nodeType = "condition");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "Condition");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_NAME");
 	}
 
 	@description = "Verify that each type of Node has Notifications property"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test HasNotificationsProperty {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68476 HasNotificationsProperty pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Title");
 
+		KaleoDesigner.deleteNode(nodeNodeLabel = "EndNode");
+
+		KaleoDesigner.addConnectorAndNodeViaViewTab(
+			connectorName = "connector",
+			newNode = "Task",
+			newNodeDescription = "Task Node Description",
+			newNodeName = "Task",
+			newNodeType = "task",
+			nodeType = "start");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "Task");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_NOTIFICATIONS");
 	}
 
 	@description = "Verify that the Task node has Timers property"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test HasTimersProperty {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68474 HasTimersProperty pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Title");
 
+		KaleoDesigner.deleteNode(nodeNodeLabel = "EndNode");
+
+		KaleoDesigner.addConnectorAndNodeViaViewTab(
+			connectorName = "connector",
+			newNode = "Task",
+			newNodeDescription = "Task Node Description",
+			newNodeName = "Task",
+			newNodeType = "task",
+			nodeType = "start");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "Task");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_TIMERS");
 	}
 
 	@description = "Verify that each type of Node has Type property"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test HasTypeProperty {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68472 HasTypeProperty pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Title");
 
+		KaleoDesigner.selectNode(nodeNodeLabel = "StartNode");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_TYPE");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "EndNode");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_TYPE");
+
+		KaleoDesigner.addNodeViaViewTab(
+			nodeDescription = "Fork Node Description",
+			nodeName = "Fork",
+			nodeNodeLabel = "Fork",
+			nodeType = "fork");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "Fork");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_TYPE");
+
+		KaleoDesigner.addNodeViaViewTab(
+			nodeDescription = "Condition Node Description",
+			nodeName = "Condition",
+			nodeNodeLabel = "Condition",
+			nodeType = "condition");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "Condition");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#SETTINGS_TYPE");
 	}
 
 	@description = "Verify that the user can rename connector"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test NodeCanBeRenamed {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68461 NodeCanBeRenamed pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Title");
 
+		KaleoDesigner.deleteNode(nodeNodeLabel = "EndNode");
+
+		KaleoDesigner.addConnectorAndNodeViaViewTab(
+			connectorName = "connector",
+			newNode = "Task",
+			newNodeDescription = "Task Node Description",
+			newNodeName = "Task",
+			newNodeType = "task",
+			nodeType = "start");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "Task");
+
+		KaleoDesigner.editNodeName(nodeName = "Test");
+
+		AssertTextEquals(
+			locator1 = "DDMEditStructure#SETTINGS_NAME",
+			value1 = "Test");
 	}
 
 	@description = "Verify that the transition can be dropped on plain field, pop up menu will appear, user can select new node, new node is created correctly"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test NodeIsCreatedWhenTransitionIsDroppedOnPlainField {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68459 NodeIsCreatedWhenTransitionIsDroppedOnPlainField pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow");
 
+		KaleoDesigner.addConnectorAndNodeViaViewTab(
+			connectorName = "Connector1",
+			newNode = "Task",
+			newNodeDescription = "Task Node Description",
+			newNodeName = "Task",
+			newNodeType = "task",
+			nodeType = "start");
+
+		KaleoDesigner.viewNodePresent(key_nodeNodeLabel = "Task");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#VIEW_FORM_CONNECTOR_DEFAULT");
 	}
 
 	@description = "Verify that the Start Node must have an outgoing transition"
-	@ignore = "Test Stub"
 	@priority = "4"
 	test StartNodeMustHaveOutgoingTransition {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68464 StartNodeMustHaveOutgoingTransition pending implementation
+		Workflow.addNewDefinition(workflowDefinitionTitle = "New Workflow Title");
 
+		KaleoDesigner.deleteConnector(connectorLabel = "connector");
+
+		Workflow.publishInvalidWorkflowDefinition(errorMessage = "The StartNode node must have an outgoing transition.");
 	}
 
 	@description = "Verify that the transition becomes yellow on mouse hoover"
@@ -296,12 +853,33 @@ definition {
 	}
 
 	@description = "Verify that transition can be connected to another edge of node, orange circle will appear"
-	@ignore = "Test Stub"
 	@priority = "5"
 	test TransitionCanBeConnectedToNode {
+		ApplicationsMenu.gotoPortlet(
+			category = "Workflow",
+			panel = "Applications",
+			portlet = "Process Builder");
 
-		// TODO LRQA-68458 TransitionCanBeConnectedToNode pending implementation
+		LexiconEntry.gotoAdd();
 
+		KaleoDesigner.selectNode(nodeNodeLabel = "EndNode");
+
+		KaleoDesigner.deleteNode(nodeNodeLabel = "EndNode");
+
+		KaleoDesigner.addNodeViaViewTab(
+			nodeDescription = "Task Node Description",
+			nodeName = "Task",
+			nodeNodeLabel = "Task",
+			nodeType = "task");
+
+		KaleoDesigner.selectNode(nodeNodeLabel = "StartNode");
+
+		KaleoDesigner.addConnectorViaViewTab(
+			connectorName = "Connector 1",
+			nodeType = "start",
+			nodeTypeDestination = "task");
+
+		AssertElementPresent(locator1 = "KaleoDesignerEditWorkflow#CIRCLE_ORANGE_CONNECTOR");
 	}
 
 }

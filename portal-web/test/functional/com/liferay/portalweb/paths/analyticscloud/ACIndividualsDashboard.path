@@ -17,6 +17,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ACTIVITIES_NUMBER</td>
+	<td>//div[@class='details']//b</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ADD_BREAKDOWN_BUTTON</td>
 	<td>//div[contains(@class,'tabs-root')]/button</td>
 	<td></td>
@@ -64,6 +69,16 @@
 <tr>
 	<td>ACTIVE_INDIVIDUAL_CHART</td>
 	<td>//*[contains(@class,'recharts-layer recharts-bar-rectangle')]/*[contains(@fill-opacity,'1')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TOTAL_ACTIVITIES</td>
+	<td>//a[@class='text-truncate'and text()='${key_userName}']/ancestor::td/following-sibling::td[text()='${key_activitiesNumber}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>INDIVIDUAL_ACTIVITIES_CHART</td>
+	<td>//*[contains(@class,'recharts-layer recharts-bar-rectangle')]/*[contains(@radius,'0')]</td>
 	<td></td>
 </tr>
 <tr>

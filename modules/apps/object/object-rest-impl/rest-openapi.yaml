@@ -19,6 +19,9 @@ components:
                 dateModified:
                     format: date
                     type: string
+                externalReferenceCode:
+                    readOnly: true
+                    type: string
                 id:
                     format: int64
                     type: integer
@@ -92,6 +95,92 @@ paths:
             tags: ["ObjectEntry"]
         post:
             operationId: postObjectEntry
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/ObjectEntry"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/ObjectEntry"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ObjectEntry"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/ObjectEntry"
+                    description:
+                        ""
+            tags: ["ObjectEntry"]
+    "/sites/{siteId}/object-entries/by-external-reference-code/{externalReferenceCode}":
+        delete:
+            operationId: deleteSiteObjectEntryByExternalReferenceCode
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      minimum: 0
+                      type: integer
+                - in: path
+                  name: externalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+                    description:
+                        ""
+            tags: ["ObjectEntry"]
+        get:
+            operationId: getSiteObjectEntryByExternalReferenceCode
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      minimum: 0
+                      type: integer
+                - in: path
+                  name: externalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ObjectEntry"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/ObjectEntry"
+                    description:
+                        ""
+            tags: ["ObjectEntry"]
+        put:
+            operationId: putSiteObjectEntryByExternalReferenceCode
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      minimum: 0
+                      type: integer
+                - in: path
+                  name: externalReferenceCode
+                  required: true
+                  schema:
+                      type: string
             requestBody:
                 content:
                     application/json:

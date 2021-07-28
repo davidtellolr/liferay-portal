@@ -50,8 +50,8 @@ import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.search.Indexable;
-import com.liferay.portal.kernel.search.IndexableType;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.InlineSQLHelper;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
@@ -112,7 +112,6 @@ import org.osgi.service.component.annotations.Reference;
 public class ObjectEntryLocalServiceImpl
 	extends ObjectEntryLocalServiceBaseImpl {
 
-	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public ObjectEntry addObjectEntry(
 			long userId, long groupId, long objectDefinitionId,
@@ -160,10 +159,11 @@ public class ObjectEntryLocalServiceImpl
 
 		_startWorkflowInstance(userId, objectEntry, serviceContext);
 
+		_reindex(objectEntry);
+
 		return objectEntry;
 	}
 
-	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public ObjectEntry addOrUpdateObjectEntry(
 			String externalReferenceCode, long userId, long groupId,
@@ -194,7 +194,11 @@ public class ObjectEntryLocalServiceImpl
 
 		objectEntry.setExternalReferenceCode(externalReferenceCode);
 
-		return objectEntryPersistence.update(objectEntry);
+		objectEntry = objectEntryPersistence.update(objectEntry);
+
+		_reindex(objectEntry);
+
+		return objectEntry;
 	}
 
 	@Override
@@ -207,7 +211,6 @@ public class ObjectEntryLocalServiceImpl
 		return objectEntryLocalService.deleteObjectEntry(objectEntry);
 	}
 
-	@Indexable(type = IndexableType.DELETE)
 	@Override
 	@SystemEvent(type = SystemEventConstants.TYPE_DELETE)
 	public ObjectEntry deleteObjectEntry(ObjectEntry objectEntry)
@@ -228,7 +231,23 @@ public class ObjectEntryLocalServiceImpl
 
 		_deleteFromTable(objectDefinition, objectEntry);
 
+		Indexer<ObjectEntry> indexer = IndexerRegistryUtil.getIndexer(
+			objectDefinition.getClassName());
+
+		indexer.delete(objectEntry);
+
 		return objectEntry;
+	}
+
+	@Override
+	public ObjectEntry deleteObjectEntry(
+			String externalReferenceCode, long companyId, long groupId)
+		throws PortalException {
+
+		ObjectEntry objectEntry = objectEntryPersistence.findByG_C_ERC(
+			groupId, companyId, externalReferenceCode);
+
+		return objectEntryLocalService.deleteObjectEntry(objectEntry);
 	}
 
 	@Override
@@ -244,6 +263,15 @@ public class ObjectEntryLocalServiceImpl
 	public int getObjectEntriesCount(long objectDefinitionId) {
 		return objectEntryPersistence.countByObjectDefinitionId(
 			objectDefinitionId);
+	}
+
+	@Override
+	public ObjectEntry getObjectEntry(
+			String externalReferenceCode, long companyId, long groupId)
+		throws PortalException {
+
+		return objectEntryPersistence.findByG_C_ERC(
+			groupId, companyId, externalReferenceCode);
 	}
 
 	@Override
@@ -351,7 +379,7 @@ public class ObjectEntryLocalServiceImpl
 			_searchRequestBuilderFactory.builder();
 
 		searchRequestBuilder.entryClassNames(
-			ObjectEntry.class.getName()
+			objectDefinition.getClassName()
 		).emptySearchEnabled(
 			true
 		).from(
@@ -428,7 +456,6 @@ public class ObjectEntryLocalServiceImpl
 			AssetLinkConstants.TYPE_RELATED);
 	}
 
-	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public ObjectEntry updateObjectEntry(
 			long userId, long objectEntryId, Map<String, Serializable> values,
@@ -456,10 +483,11 @@ public class ObjectEntryLocalServiceImpl
 
 		_startWorkflowInstance(userId, objectEntry, serviceContext);
 
+		_reindex(objectEntry);
+
 		return objectEntry;
 	}
 
-	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public ObjectEntry updateStatus(
 			long userId, long objectEntryId, int status,
@@ -479,7 +507,11 @@ public class ObjectEntryLocalServiceImpl
 
 		objectEntry.setStatusDate(serviceContext.getModifiedDate(null));
 
-		return objectEntryPersistence.update(objectEntry);
+		objectEntry = objectEntryPersistence.update(objectEntry);
+
+		_reindex(objectEntry);
+
+		return objectEntry;
 	}
 
 	private void _deleteFromTable(
@@ -859,6 +891,18 @@ public class ObjectEntryLocalServiceImpl
 			throw new IllegalArgumentException(
 				"Unable to put value with class " + clazz.getName());
 		}
+	}
+
+	private void _reindex(ObjectEntry objectEntry) throws PortalException {
+		ObjectDefinition objectDefinition =
+			_objectDefinitionPersistence.findByPrimaryKey(
+				objectEntry.getObjectDefinitionId());
+
+		Indexer<ObjectEntry> indexer = IndexerRegistryUtil.getIndexer(
+			objectDefinition.getClassName());
+
+		indexer.reindex(
+			objectDefinition.getClassName(), objectEntry.getObjectEntryId());
 	}
 
 	/**

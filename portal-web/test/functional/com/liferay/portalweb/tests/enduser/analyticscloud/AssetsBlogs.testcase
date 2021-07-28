@@ -77,7 +77,7 @@ definition {
 
 		ACTimeFilter.setLast24Hours();
 
-		ACAssets.accessAssets(titleName = "Blogs AC Title");
+		ACNavigation.openItem(itemName = "Blogs AC Title");
 
 		ACIndividualsDashboard.goToOverviewTab();
 
@@ -137,6 +137,8 @@ definition {
 			pageName = "AC Page",
 			siteName = "Site Name");
 
+		BlogsNavigator.gotoPG(entryTitle = "Blogs AC Title");
+
 		ACUtils.closeAllSessions();
 
 		Pause(locator1 = "30000");
@@ -153,7 +155,7 @@ definition {
 
 		ACTimeFilter.setLast24Hours();
 
-		ACAssets.accessAssets(titleName = "Blogs AC Title");
+		ACNavigation.openItem(itemName = "Blogs AC Title");
 
 		ACIndividualsDashboard.goToKnownIndividualsTab();
 
@@ -251,7 +253,7 @@ definition {
 
 		ACTimeFilter.setLast24Hours();
 
-		ACAssets.accessAssets(titleName = "Blogs AC Title");
+		ACNavigation.openItem(itemName = "Blogs AC Title");
 
 		ACAssets.viewVisitorsBehaviorMetric(
 			metricTitle = "Views",
