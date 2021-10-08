@@ -78,6 +78,8 @@ public class SitemapAction implements Action {
 
 				layoutSet = LayoutSetLocalServiceUtil.getLayoutSet(
 					groupId, privateLayout);
+
+				themeDisplay.setSiteGroupId(groupId);
 			}
 			else {
 				String host = PortalUtil.getHost(httpServletRequest);
