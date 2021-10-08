@@ -62,7 +62,7 @@ public class SitemapAction implements Action {
 
 			String layoutUuid = ParamUtil.getString(
 				httpServletRequest, "layoutUuid");
-			long groupId = ParamUtil.getLong(httpServletRequest, "groupId");
+			long groupId = ParamUtil.getLong(httpServletRequest, "groupId1");
 
 			LayoutSet layoutSet = null;
 
