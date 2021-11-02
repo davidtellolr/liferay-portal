@@ -678,10 +678,10 @@ public class DDMIndexerImpl implements DDMIndexer {
 
 		BooleanQuery booleanQuery = new BooleanQueryImpl();
 
-		Boolean localizableField = true;
+		Boolean localizableField = false;
 
 		if (ddmStructure.hasFieldByFieldReference(fieldReference)) {
-			localizableField = Boolean.valueOf(
+			localizableField = GetterUtil.getBoolean(
 				ddmStructure.getFieldPropertyByFieldReference(
 					fieldReference, "localizable"));
 
