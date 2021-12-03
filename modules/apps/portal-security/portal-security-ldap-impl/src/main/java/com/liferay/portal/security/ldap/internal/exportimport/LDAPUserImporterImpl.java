@@ -1269,11 +1269,11 @@ public class LDAPUserImporterImpl implements LDAPUserImporter, UserImporter {
 				userLdapAttributes, "modifyTimestamp");
 
 			try {
+				updateExpandoAttributes(ldapImportContext, user, ldapUser);
+
 				user = updateUser(
 					ldapImportContext, ldapUser, user, password,
 					modifyTimestamp, isNew);
-
-				updateExpandoAttributes(ldapImportContext, user, ldapUser);
 
 				ldapImportContext.addImportedUserId(
 					fullUserDN, user.getUserId());
