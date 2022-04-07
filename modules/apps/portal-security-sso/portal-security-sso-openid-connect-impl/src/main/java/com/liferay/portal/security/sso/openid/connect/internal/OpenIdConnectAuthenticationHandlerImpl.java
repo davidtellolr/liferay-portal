@@ -35,6 +35,8 @@ import com.liferay.portal.security.sso.openid.connect.internal.session.manager.O
 import com.liferay.portal.security.sso.openid.connect.internal.util.OpenIdConnectTokenRequestUtil;
 
 import com.nimbusds.jwt.JWT;
+import com.nimbusds.langtag.LangTag;
+import com.nimbusds.langtag.LangTagException;
 import com.nimbusds.oauth2.sdk.ErrorObject;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.ResponseType;
@@ -65,7 +67,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -193,10 +197,26 @@ public class OpenIdConnectAuthenticationHandlerImpl
 		Nonce nonce = new Nonce();
 		State state = new State();
 
+		Locale locale = _portal.getLocale(httpServletRequest);
+		List<LangTag> uiLocales = null;
+
+		try {
+			if (locale != null) {
+				uiLocales = Arrays.asList(new LangTag(locale.getLanguage()));
+			}
+		}
+		catch (LangTagException langTagException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"Unable to create the LangTag with the current locale: " +
+						locale.getLanguage());
+			}
+		}
+
 		URI authenticationRequestURI = _getAuthenticationRequestURI(
 			_getLoginRedirectURI(httpServletRequest), nonce,
 			openIdConnectProvider,
-			Scope.parse(openIdConnectProvider.getScopes()), state);
+			Scope.parse(openIdConnectProvider.getScopes()), state, uiLocales);
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
@@ -227,7 +247,7 @@ public class OpenIdConnectAuthenticationHandlerImpl
 			URI loginRedirectURI, Nonce nonce,
 			OpenIdConnectProvider<OIDCClientMetadata, OIDCProviderMetadata>
 				openIdConnectProvider,
-			Scope scope, State state)
+			Scope scope, State state, List<LangTag> uiLocales)
 		throws OpenIdConnectServiceException.ProviderException {
 
 		OIDCProviderMetadata oidcProviderMetadata =
@@ -245,6 +265,8 @@ public class OpenIdConnectAuthenticationHandlerImpl
 			nonce
 		).endpointURI(
 			oidcProviderMetadata.getAuthorizationEndpointURI()
+		).uiLocales(
+			uiLocales
 		);
 
 		OpenIdConnectProviderImpl openIdConnectProviderImpl =
